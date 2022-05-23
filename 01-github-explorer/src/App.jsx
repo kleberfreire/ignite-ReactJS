@@ -1,9 +1,16 @@
+import { RepositoryList } from "./components/RepositoryList";
 import "./styles/global.scss";
+
+const repository = {
+  name: "Form in ReactJS",
+  description: "Um formulário simples em ReactJS",
+  html_url: "teste",
+};
 
 export function App() {
   return (
     <div>
-      <h1>Hello World!!!</h1>
+      <RepositoryList repository={repository} />
     </div>
   );
 }

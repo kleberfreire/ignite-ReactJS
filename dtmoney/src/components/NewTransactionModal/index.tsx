@@ -1,8 +1,9 @@
 import Modal from "react-modal";
-import { Container, TransectionTypeContainer } from "./styles";
+import { Container, TransactionTypeContainer, RadioBox } from "./styles";
 import CloseImg from "../../assets/close.svg";
 import Income from "../../assets/income.svg";
 import Outcome from "../../assets/outcome.svg";
+import { FormEvent, useState } from "react";
 
 interface INewTransactionModalProps {
   isOpen: boolean;
@@ -13,6 +14,13 @@ export function NewTransactionModal({
   isOpen,
   onRequestClose,
 }: INewTransactionModalProps) {
+  const [type, setType] = useState<"deposit" | "withdraw">("deposit");
+
+  function handleCreateNewTransaction(event: FormEvent) {
+    event.preventDefault();
+    console.log("create new transaction");
+  }
+
   return (
     <>
       <Modal
@@ -28,21 +36,38 @@ export function NewTransactionModal({
         >
           <img src={CloseImg} alt="Fechar modal" />
         </button>
-        <Container>
+        <Container onSubmit={handleCreateNewTransaction}>
           <h2>Nova transação</h2>
           <input placeholder="Título" />
           <input type="number" placeholder="Valor" />
 
-          <TransectionTypeContainer>
-            <button type="button">
+          <TransactionTypeContainer>
+            <RadioBox
+              type="button"
+              onClick={() => {
+                setType("deposit");
+                console.log(type);
+              }}
+              isActive={type === "deposit"}
+              activeColor={"green"}
+            >
               <img src={Income} alt="entrada" />
               <span>Entrada</span>
-            </button>
-            <button>
+            </RadioBox>
+
+            <RadioBox
+              type="button"
+              onClick={() => {
+                setType("withdraw");
+                console.log(type);
+              }}
+              isActive={type === "withdraw"}
+              activeColor={"red"}
+            >
               <img src={Outcome} alt="entrada" />
               <span>Saída</span>
-            </button>
-          </TransectionTypeContainer>
+            </RadioBox>
+          </TransactionTypeContainer>
 
           <input placeholder="Categoria" />
 

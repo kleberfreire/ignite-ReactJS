@@ -1,10 +1,9 @@
-import { FormEvent, useState, useContext } from "react";
+import { FormEvent, useState } from "react";
 import Modal from "react-modal";
 import { Container, TransactionTypeContainer, RadioBox } from "./styles";
 import CloseImg from "../../assets/close.svg";
 import Income from "../../assets/income.svg";
 import Outcome from "../../assets/outcome.svg";
-import { api } from "../../services/api";
 import { useTransactions } from "../../hooks/useTransections";
 
 interface INewTransactionModalProps {
@@ -21,7 +20,7 @@ export function NewTransactionModal({
   const [category, setCategory] = useState<string>("");
   const [type, setType] = useState<"deposit" | "withdraw">("deposit");
 
-  const { transactions, createTransactions } = useTransactions();
+  const { createTransactions } = useTransactions();
 
   async function handleCreateNewTransaction(event: FormEvent) {
     event.preventDefault();

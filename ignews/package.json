@@ -16,6 +16,7 @@
     "@prismicio/react": "^2.4.1",
     "@prismicio/slice-simulator-react": "^0.2.2",
     "next": "12.1.6",
+    "prismic-dom": "^2.2.7",
     "react": "18.1.0",
     "react-dom": "18.1.0",
     "react-icons": "^4.3.1",
@@ -24,6 +25,7 @@
   },
   "devDependencies": {
     "@types/node": "17.0.36",
+    "@types/prismic-dom": "^2.1.1",
     "@types/react": "18.0.9",
     "@types/react-dom": "18.0.5",
     "eslint": "8.16.0",

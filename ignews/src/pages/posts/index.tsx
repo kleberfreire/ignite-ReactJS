@@ -1,6 +1,6 @@
 import Head from "next/head";
-import { createClient, linkResolver } from "../../services/prismicio";
-import * as prismicHelpers from "@prismicio/helpers";
+import { createClient } from "../../services/prismicio";
+import Link from "next/link";
 
 import { RichText } from "prismic-dom";
 
@@ -30,11 +30,13 @@ export default function Posts({ posts }: IPostsProps) {
       <main className={styles.container}>
         <div className={styles.posts}>
           {posts.map((post) => (
-            <a href="#" key={post.slug}>
-              <time>{post.updatedAT}</time>
-              <strong>{post.title}</strong>
-              <p>{post.excerpt}</p>
-            </a>
+            <Link href={`/posts/${post.slug}`} key={post.slug}>
+              <a>
+                <time>{post.updatedAT}</time>
+                <strong>{post.title}</strong>
+                <p>{post.excerpt}</p>
+              </a>
+            </Link>
           ))}
         </div>
       </main>
@@ -42,10 +44,12 @@ export default function Posts({ posts }: IPostsProps) {
   );
 }
 
-export async function getStaticProps() {
-  const client = createClient();
+export async function getStaticProps({ previewData }) {
+  const client = createClient({ previewData });
 
-  const response = await client.getAllByType("post");
+  const response = await client.getAllByType("post", {
+    pageSize: 100,
+  });
 
   const posts = response.map((post: any) => {
     return {

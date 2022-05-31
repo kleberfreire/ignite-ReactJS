@@ -1,7 +1,6 @@
 import { SignInButton } from "../SignInButton";
 import styles from "./styles.module.scss";
 
-import { useRouter } from "next/router";
 import { ActiveLink } from "../ActiveLink";
 
 export function Header() {
@@ -13,7 +12,7 @@ export function Header() {
           <ActiveLink href="/" activeClassName={styles.active}>
             <a>Home</a>
           </ActiveLink>
-          <ActiveLink href="/posts" activeClassName={styles.active} prefetch>
+          <ActiveLink href="/posts" activeClassName={styles.active}>
             <a>Posts</a>
           </ActiveLink>
         </nav>

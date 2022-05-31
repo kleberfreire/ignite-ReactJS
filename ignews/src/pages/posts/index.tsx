@@ -52,8 +52,10 @@ export async function getStaticProps() {
       slug: post.uid,
       title: RichText.asText(post.data.Title),
       excerpt:
-        post.data.Content.find((content: any) => content.type === "paragraph")
-          ?.text ?? "",
+        post.data.Content.find(
+          (content: any) =>
+            content.type === "paragraph" && content.text.length > 0
+        )?.text ?? "",
       updatedAT: new Date(post.last_publication_date).toLocaleDateString(
         "pt-BR",
         {

@@ -16,7 +16,6 @@ interface IPost {
 }
 
 export default function Post({ post }: IPost) {
-  console.log("----", post);
   return (
     <>
       <Head>
@@ -42,10 +41,6 @@ export const getServerSideProps: GetServerSideProps = async ({
   params,
   previewData,
 }) => {
-  //console.log("req -", req);
-  // const session = await getSession({ req });
-
-  // console.log("session -", session);
   const client = createClient({ previewData });
 
   const { slug } = params as any;

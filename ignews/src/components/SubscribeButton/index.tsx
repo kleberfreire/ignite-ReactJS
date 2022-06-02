@@ -13,7 +13,6 @@ export function SubscribeButton({ priceId }: ISubscribeButtonProps) {
   async function handleSubscribe() {
     if (status !== "authenticated") {
       signIn("github");
-      console.log("aqui");
       return;
     }
 
@@ -27,7 +26,6 @@ export function SubscribeButton({ priceId }: ISubscribeButtonProps) {
         sessionId,
       });
     } catch (err) {
-      console.log(err);
       alert(err.message);
     }
   }

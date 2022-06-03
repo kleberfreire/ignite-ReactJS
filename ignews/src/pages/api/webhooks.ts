@@ -73,7 +73,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
             );
             break;
           default:
-            throw new Error(`Unknown event type: ${type}`);
+            throw new Error(`Unknown event type.`);
         }
       } catch (err: any) {
         console.log(`❌ Error message type: ${err.message}`);

@@ -23,7 +23,19 @@ export async function saveSubscription(
     price_id: subscription.items.data[0].price.id,
   };
 
-  if (createAction) {
+  let subscriptionExists = null;
+
+  try {
+    subscriptionExists = await fauna.query(
+      q.Get(
+        q.Match(q.Index("subscription_by_user_ref"), subscriptionData.userId)
+      )
+    );
+  } catch {
+    subscriptionExists = null;
+  }
+
+  if (createAction && !subscriptionExists) {
     await fauna.query(
       q.Create(q.Collection("subscriptions"), {
         data: subscriptionData,
@@ -34,7 +46,12 @@ export async function saveSubscription(
       q.Replace(
         q.Select(
           "ref",
-          q.Get(q.Match(q.Index("subscription_by_id"), subscriptionId))
+          q.Get(
+            q.Match(
+              q.Index("subscription_by_user_ref"),
+              subscriptionData.userId
+            )
+          )
         ),
         { data: subscriptionData }
       )

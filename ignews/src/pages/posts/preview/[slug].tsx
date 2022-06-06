@@ -1,10 +1,14 @@
-import { GetServerSideProps } from "next";
+import { GetStaticPaths, GetStaticProps } from "next";
 import Head from "next/head";
-import { createClient } from "../../services/prismicio";
-import { getSession } from "next-auth/react";
+
+import { getSession, useSession } from "next-auth/react";
 import { RichText } from "prismic-dom";
 
-import styles from "./post.module.scss";
+import styles from "../post.module.scss";
+import { createClient } from "../../../services/prismicio";
+import Link from "next/link";
+import { useEffect } from "react";
+import { useRouter } from "next/router";
 
 interface IPost {
   post: {
@@ -16,6 +20,16 @@ interface IPost {
 }
 
 export default function Post({ post }: IPost) {
+  const { status } = useSession();
+  const router = useRouter();
+
+  useEffect(() => {
+    console.log(status);
+    if (status === "authenticated") {
+      router.push(`/posts/${post.slug}`);
+    }
+  }, [status]);
+
   return (
     <>
       <Head>
@@ -27,30 +41,33 @@ export default function Post({ post }: IPost) {
           <h1>{post.title}</h1>
           <time>{post.updatedAT}</time>
           <div
-            className={styles.postContent}
+            className={`${styles.postContent} ${styles.previewContent}`}
             dangerouslySetInnerHTML={{ __html: post.content }}
           />
+          <div className={styles.continueReading}>
+            Wanna continue reading ?
+            <Link href="/">
+              <a href="">Subscribe 🤗</a>
+            </Link>
+          </div>
         </article>
       </main>
     </>
   );
 }
 
-export const getServerSideProps: GetServerSideProps = async ({
-  req,
+export const getStaticPaths: GetStaticPaths = async () => {
+  return {
+    paths: [],
+    fallback: "blocking",
+  };
+};
+
+export const getStaticProps: GetStaticProps = async ({
   params,
   previewData,
 }) => {
-  const session = await getSession({ req });
   const { slug } = params as any;
-  if (!session?.activeSubscription) {
-    return {
-      redirect: {
-        destination: "/",
-        permanent: false,
-      },
-    };
-  }
 
   const client = createClient({ previewData });
 
@@ -59,7 +76,7 @@ export const getServerSideProps: GetServerSideProps = async ({
   const post = {
     slug,
     title: RichText.asText(response.data.Title),
-    content: RichText.asHtml(response.data.Content),
+    content: RichText.asHtml(response.data.Content.splice(0, 3)),
     updatedAT: new Date(response.last_publication_date).toLocaleDateString(
       "pt-BR",
       {
@@ -74,5 +91,6 @@ export const getServerSideProps: GetServerSideProps = async ({
     props: {
       post,
     },
+    revalidate: 60 * 30, // 30 minutes
   };
 };

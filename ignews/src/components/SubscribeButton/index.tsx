@@ -2,6 +2,7 @@ import { signIn, useSession } from "next-auth/react";
 import styles from "./styles.module.scss";
 import { api } from "../../services/api";
 import { getStripeJs } from "../../services/stripe-js";
+import { useRouter } from "next/router";
 
 interface ISubscribeButtonProps {
   priceId: string;
@@ -9,10 +10,15 @@ interface ISubscribeButtonProps {
 
 export function SubscribeButton({ priceId }: ISubscribeButtonProps) {
   const { data, status } = useSession();
+  const router = useRouter();
 
   async function handleSubscribe() {
     if (status !== "authenticated") {
       signIn("github");
+      return;
+    }
+    if (data.activeSubscription) {
+      router.push("/posts");
       return;
     }
 
@@ -25,7 +31,7 @@ export function SubscribeButton({ priceId }: ISubscribeButtonProps) {
       await stripe.redirectToCheckout({
         sessionId,
       });
-    } catch (err) {
+    } catch (err: any) {
       alert(err.message);
     }
   }

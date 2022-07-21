@@ -1,8 +1,8 @@
-import type { NextPage } from "next";
+import { Button, Flex, Stack } from "@chakra-ui/react";
 import { yupResolver } from "@hookform/resolvers/yup";
-import * as yup from "yup";
+import type { NextPage } from "next";
 import { SubmitHandler, useForm } from "react-hook-form";
-import { Flex, Button, Stack } from "@chakra-ui/react";
+import * as yup from "yup";
 import { Input } from "../components/Form/Input";
 
 type TSignInFormData = {
@@ -25,9 +25,7 @@ const SingIn: NextPage = () => {
 
   const { errors } = formState;
 
-  const handleSignIn: SubmitHandler<TSignInFormData> = (values) => {
-    console.log(values);
-  };
+  const handleSignIn: SubmitHandler<TSignInFormData> = (values) => {};
 
   return (
     <Flex w="100vw" h="100vh" align="center" justify="center">

@@ -24,18 +24,44 @@ import { Header } from "../../components/Header";
 import { Pagination } from "../../components/Pagination";
 import { Sidebar } from "../../components/Sidebar";
 
+type User = {
+  id: string;
+  name: string;
+  email: string;
+  createdAt: string;
+};
+
 export default function Users() {
   const isWideVersion = useBreakpointValue({
     base: false,
     lg: true,
   });
 
-  const { data, isLoading, error } = useQuery(["users"], async () => {
-    const response = await fetch("http://localhost:3000/api/users");
+  const { data, isLoading, isFetching, error } = useQuery(
+    ["users"],
+    async () => {
+      const response = await fetch("http://localhost:3000/api/users");
 
-    const data = response.json();
-    return data;
-  });
+      const data = await response.json();
+      const users = data.users.map((user: User) => {
+        return {
+          ...user,
+          createdAt: new Date(user.createdAt).toLocaleDateString("pt-BR", {
+            day: "2-digit",
+            month: "long",
+            year: "numeric",
+          }),
+        };
+      });
+
+      return users;
+    },
+    {
+      staleTime: 1000 * 5,
+    }
+  );
+
+  // console.log(data);
 
   return (
     <Box>
@@ -46,6 +72,11 @@ export default function Users() {
           <Flex mb="8" justify="space-between" align="center">
             <Heading size="lg" fontWeight="normal">
               Usuários
+              {!isLoading && isFetching ? (
+                <Spinner size="sm" color="gray.500" ml="4" />
+              ) : (
+                ""
+              )}
             </Heading>
             <Link href="/users/create" passHref>
               <Button
@@ -82,34 +113,42 @@ export default function Users() {
                   </Tr>
                 </Thead>
                 <Tbody>
-                  <Tr>
-                    <Td px={["1", "4", "6"]}>
-                      <Checkbox colorScheme="pink" />
-                    </Td>
-                    <Td>
-                      <Box>
-                        <Text fontWeight="bold">Kleber Freire</Text>
-                        <Text fontSize={["0.75rem", "sm"]} color="gray.300">
-                          Kleber@kleberfreire.dev
-                        </Text>
-                      </Box>
-                    </Td>
-                    {isWideVersion && <Td>04/04/2020</Td>}
-                    <Td>
-                      <Button
-                        as="a"
-                        size="sm"
-                        fontSize="sm"
-                        colorScheme="purple"
-                        leftIcon={
-                          isWideVersion ? <Icon as={RiPencilLine} /> : undefined
-                        }
-                        justifyContent="flex-end"
-                      >
-                        {isWideVersion ? "Editar" : <Icon as={RiPencilLine} />}
-                      </Button>
-                    </Td>
-                  </Tr>
+                  {data.map((user: User) => (
+                    <Tr key={user.id}>
+                      <Td px={["1", "4", "6"]}>
+                        <Checkbox colorScheme="pink" />
+                      </Td>
+                      <Td>
+                        <Box>
+                          <Text fontWeight="bold">{user.name}</Text>
+                          <Text fontSize={["0.75rem", "sm"]} color="gray.300">
+                            {user.email}
+                          </Text>
+                        </Box>
+                      </Td>
+                      {isWideVersion && <Td>{user.createdAt}</Td>}
+                      <Td>
+                        <Button
+                          as="a"
+                          size="sm"
+                          fontSize="sm"
+                          colorScheme="purple"
+                          leftIcon={
+                            isWideVersion ? (
+                              <Icon as={RiPencilLine} />
+                            ) : undefined
+                          }
+                          justifyContent="flex-end"
+                        >
+                          {isWideVersion ? (
+                            "Editar"
+                          ) : (
+                            <Icon as={RiPencilLine} />
+                          )}
+                        </Button>
+                      </Td>
+                    </Tr>
+                  ))}
                 </Tbody>
               </Table>
               <Pagination />

@@ -1,7 +1,7 @@
 import { yupResolver } from "@hookform/resolvers/yup";
-import * as yup from "yup";
-import { SubmitHandler, useForm } from "react-hook-form";
 import Link from "next/link";
+import { SubmitHandler, useForm } from "react-hook-form";
+import * as yup from "yup";
 
 import {
   Box,
@@ -48,9 +48,7 @@ export default function UsersCreate() {
 
   const { errors } = formState;
 
-  const handleCreateUser: SubmitHandler<TSubmitCreateUser> = (values) => {
-    console.log(values);
-  };
+  const handleCreateUser: SubmitHandler<TSubmitCreateUser> = (values) => {};
 
   return (
     <Box>

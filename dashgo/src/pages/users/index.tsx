@@ -15,7 +15,6 @@ import {
   Tr,
   useBreakpointValue,
 } from "@chakra-ui/react";
-import { useQuery } from "@tanstack/react-query";
 
 import Link from "next/link";
 
@@ -23,13 +22,7 @@ import { RiAddLine, RiPencilLine } from "react-icons/ri";
 import { Header } from "../../components/Header";
 import { Pagination } from "../../components/Pagination";
 import { Sidebar } from "../../components/Sidebar";
-
-type User = {
-  id: string;
-  name: string;
-  email: string;
-  createdAt: string;
-};
+import { userUsers } from "../../services/hooks/useUsers";
 
 export default function Users() {
   const isWideVersion = useBreakpointValue({
@@ -37,29 +30,7 @@ export default function Users() {
     lg: true,
   });
 
-  const { data, isLoading, isFetching, error } = useQuery(
-    ["users"],
-    async () => {
-      const response = await fetch("http://localhost:3000/api/users");
-
-      const data = await response.json();
-      const users = data.users.map((user: User) => {
-        return {
-          ...user,
-          createdAt: new Date(user.createdAt).toLocaleDateString("pt-BR", {
-            day: "2-digit",
-            month: "long",
-            year: "numeric",
-          }),
-        };
-      });
-
-      return users;
-    },
-    {
-      staleTime: 1000 * 5,
-    }
-  );
+  const { data, isLoading, isFetching, error } = userUsers();
 
   // console.log(data);
 
@@ -151,7 +122,11 @@ export default function Users() {
                   ))}
                 </Tbody>
               </Table>
-              <Pagination />
+              <Pagination
+                totalCountOfRegisters={200}
+                currentPage={19}
+                onPageChange={() => {}}
+              />
             </>
           )}
         </Box>

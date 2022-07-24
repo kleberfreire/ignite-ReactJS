@@ -26,6 +26,7 @@ export async function getUsers(): Promise<User[]> {
 }
 
 export function userUsers() {
+  // eslint-disable-next-line react-hooks/rules-of-hooks
   return useQuery(["users"], getUsers, {
     staleTime: 1000 * 5,
   });

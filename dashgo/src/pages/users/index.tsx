@@ -17,6 +17,7 @@ import {
 } from "@chakra-ui/react";
 
 import Link from "next/link";
+import { useState } from "react";
 
 import { RiAddLine, RiPencilLine } from "react-icons/ri";
 import { Header } from "../../components/Header";
@@ -24,15 +25,21 @@ import { Pagination } from "../../components/Pagination";
 import { Sidebar } from "../../components/Sidebar";
 import { userUsers } from "../../services/hooks/useUsers";
 
-export default function Users() {
+type User = {
+  id: string;
+  name: string;
+  email: string;
+  createdAt: string;
+};
+
+export default function UsersList() {
+  const [page, setPage] = useState(1);
+  const { data, isLoading, isFetching, error } = userUsers();
+
   const isWideVersion = useBreakpointValue({
     base: false,
     lg: true,
   });
-
-  const { data, isLoading, isFetching, error } = userUsers();
-
-  // console.log(data);
 
   return (
     <Box>
@@ -84,7 +91,7 @@ export default function Users() {
                   </Tr>
                 </Thead>
                 <Tbody>
-                  {data.map((user: User) => (
+                  {data?.map((user: User) => (
                     <Tr key={user.id}>
                       <Td px={["1", "4", "6"]}>
                         <Checkbox colorScheme="pink" />

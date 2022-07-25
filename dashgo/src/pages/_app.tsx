@@ -4,12 +4,12 @@ import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import type { AppProps } from "next/app";
 import { SidebarDrawerProvider } from "../contexts/SidebarDrawerContext";
 import { makeServer } from "../services/mirage";
+import { queryClient } from "../services/queryClient";
 import { theme } from "../styles/theme";
 
 if (process.env.NODE_ENV === "development") {
   makeServer({ environment: "development" });
 }
-const queryClient = new QueryClient();
 
 function MyApp({ Component, pageProps }: AppProps) {
   return (

@@ -2,6 +2,7 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import Link from "next/link";
 import { SubmitHandler, useForm } from "react-hook-form";
 import * as yup from "yup";
+import { useMutation } from "@tanstack/react-query";
 
 import {
   Box,
@@ -17,6 +18,8 @@ import { Input } from "../../components/Form/Input";
 import { Header } from "../../components/Header";
 
 import { Sidebar } from "../../components/Sidebar";
+import { api } from "../../services/api";
+import { queryClient } from "../../services/queryClient";
 
 type TSubmitCreateUser = {
   name: string;
@@ -42,13 +45,32 @@ const schema = yup.object({
 });
 
 export default function UsersCreate() {
+  const createUser = useMutation(
+    async (user: TSubmitCreateUser) => {
+      const response = await api.post("users", {
+        user: {
+          ...user,
+          created_at: new Date(),
+        },
+      });
+
+      return response.data.user;
+    },
+    {
+      onSuccess: () => {
+        queryClient.invalidateQueries(["users"]);
+      },
+    }
+  );
   const { register, handleSubmit, formState } = useForm<TSubmitCreateUser>({
     resolver: yupResolver(schema),
   });
 
   const { errors } = formState;
 
-  const handleCreateUser: SubmitHandler<TSubmitCreateUser> = (values) => {};
+  const handleCreateUser: SubmitHandler<TSubmitCreateUser> = async (values) => {
+    await createUser.mutateAsync(values);
+  };
 
   return (
     <Box>

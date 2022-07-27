@@ -1,18 +1,21 @@
 import type { NextPage } from "next";
-import { FormEvent, useState } from "react";
+import { FormEvent, useContext, useState } from "react";
+import { AuthContext } from "../context/AuthContext";
 import styles from "../styles/Home.module.css";
 
 const Home: NextPage = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
-  function handleSubmit(e: FormEvent<HTMLFormElement>): void {
+  const { isAuthenticated, signIn } = useContext(AuthContext);
+
+  async function handleSubmit(e: FormEvent<HTMLFormElement>): Promise<void> {
     e.preventDefault();
     const data = {
       email,
       password,
     };
-    console.log(data);
+    await signIn(data);
   }
 
   return (

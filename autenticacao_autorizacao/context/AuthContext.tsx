@@ -2,7 +2,7 @@ import Router from "next/router";
 import { createContext, ReactNode, useState } from "react";
 import { api } from "../services/api";
 
-type User = {
+type TUser = {
   email: string;
   permissions: string;
   roles: string;
@@ -15,6 +15,7 @@ type TSignInCredentials = {
 
 type TAuthContextData = {
   signIn(credentials: TSignInCredentials): Promise<void>;
+  user: TUser;
   isAuthenticated: boolean;
 };
 
@@ -25,8 +26,8 @@ type TAuthProviderProps = {
 export const AuthContext = createContext({} as TAuthContextData);
 
 export function AuthContextProvider({ children }: TAuthProviderProps) {
-  const [user, setUser] = useState<User>();
-  const isAuthenticated = false;
+  const [user, setUser] = useState<TUser>();
+  const isAuthenticated = !!user;
 
   async function signIn({ email, password }: TSignInCredentials) {
     try {
@@ -52,7 +53,7 @@ export function AuthContextProvider({ children }: TAuthProviderProps) {
   }
 
   return (
-    <AuthContext.Provider value={{ isAuthenticated, signIn }}>
+    <AuthContext.Provider value={{ isAuthenticated, signIn, user }}>
       {children}
     </AuthContext.Provider>
   );

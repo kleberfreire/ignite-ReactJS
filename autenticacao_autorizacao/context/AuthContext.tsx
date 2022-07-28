@@ -1,5 +1,6 @@
 import Router from "next/router";
-import { createContext, ReactNode, useState } from "react";
+import { createContext, ReactNode, useEffect, useState } from "react";
+import { setCookie, parseCookies } from "nookies";
 import { api } from "../services/api";
 
 type TUser = {
@@ -15,7 +16,7 @@ type TSignInCredentials = {
 
 type TAuthContextData = {
   signIn(credentials: TSignInCredentials): Promise<void>;
-  user: TUser;
+  user: TUser | undefined;
   isAuthenticated: boolean;
 };
 
@@ -29,6 +30,18 @@ export function AuthContextProvider({ children }: TAuthProviderProps) {
   const [user, setUser] = useState<TUser>();
   const isAuthenticated = !!user;
 
+  useEffect(() => {
+    const { "nextauth.token": token } = parseCookies();
+
+    if (token) {
+      api.get("/me").then((response) => {
+        const { email, permissions, roles } = response.data;
+
+        setUser({ email, permissions, roles });
+      });
+    }
+  }, []);
+
   async function signIn({ email, password }: TSignInCredentials) {
     try {
       const response = await api.post("sessions", {
@@ -36,13 +49,24 @@ export function AuthContextProvider({ children }: TAuthProviderProps) {
         password,
       });
 
-      const { permissions, roles } = response.data;
+      const { token, refreshToken, permissions, roles } = response.data;
+
+      setCookie(undefined, "nextauth.token", token, {
+        maxAge: 60 * 60 * 24 * 30, // 30 days
+        path: "/",
+      });
+      setCookie(undefined, "nextauth.refreshToken", refreshToken, {
+        maxAge: 60 * 60 * 24 * 30, // 30 days
+        path: "/",
+      });
 
       setUser({
         email,
         permissions,
         roles,
       });
+
+      api.defaults.headers["Authorization"] = `Bearer ${token}`;
 
       Router.push("/dashboard");
 

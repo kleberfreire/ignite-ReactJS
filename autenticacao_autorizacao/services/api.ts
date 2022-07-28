@@ -22,15 +22,12 @@ api.interceptors.response.use(
       if (error.response.data.code === "token.expired") {
         cookies = parseCookies();
 
-        console.log(
-          "resposta reponse.data",
-          error.response.data.code === "token.expired"
-        );
         const { "nextauth.refreshToken": refreshToken } = cookies;
         const originalConfig = error.config;
 
         if (!isRefreshing) {
           isRefreshing = true;
+
           api
             .post("/refresh", {
               refreshToken,

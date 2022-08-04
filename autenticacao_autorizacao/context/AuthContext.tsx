@@ -1,12 +1,19 @@
 import Router from "next/router";
-import { createContext, ReactNode, useEffect, useState } from "react";
+import {
+  createContext,
+  MutableRefObject,
+  ReactNode,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
 import { setCookie, parseCookies, destroyCookie } from "nookies";
-import { api } from "../services/api";
+import { api } from "../services/apiClient";
 
 type TUser = {
   email: string;
-  permissions: string;
-  roles: string;
+  permissions: string[];
+  roles: string[];
 };
 
 type TSignInCredentials = {
@@ -15,29 +22,50 @@ type TSignInCredentials = {
 };
 
 type TAuthContextData = {
-  signIn(credentials: TSignInCredentials): Promise<void>;
-  user: TUser | undefined;
+  signIn: (credentials: TSignInCredentials) => Promise<void>;
+  signOut: () => void;
+  user: TUser;
   isAuthenticated: boolean;
+  broadcastAuth: MutableRefObject<BroadcastChannel>;
 };
 
 type TAuthProviderProps = {
   children: ReactNode;
 };
 
-export function signOut() {
-  destroyCookie(undefined, "nextauth.token", "nextauth.refreshToken");
-  Router.push("/");
-}
-
 export const AuthContext = createContext({} as TAuthContextData);
+
+export function signOut() {
+  destroyCookie(undefined, "nextauth.token");
+  destroyCookie(undefined, "nextauth.refreshToken");
+  setTimeout(() => {
+    Router.push("/");
+  }, 1000);
+}
 
 export function AuthContextProvider({ children }: TAuthProviderProps) {
   const [user, setUser] = useState<TUser>();
   const isAuthenticated = !!user;
 
+  const broadcastAuth = useRef<BroadcastChannel>(null);
+
+  useEffect(() => {
+    broadcastAuth.current = new BroadcastChannel("auth");
+
+    broadcastAuth.current.onmessage = (message) => {
+      switch (message.data) {
+        case "signOut":
+          signOut();
+          break;
+
+        default:
+          break;
+      }
+    };
+  }, [broadcastAuth]);
+
   useEffect(() => {
     const { "nextauth.token": token } = parseCookies();
-
     if (token) {
       api
         .get("/me")
@@ -79,15 +107,13 @@ export function AuthContextProvider({ children }: TAuthProviderProps) {
       api.defaults.headers["Authorization"] = `Bearer ${token}`;
 
       Router.push("/dashboard");
-
-      console.log(response.data);
-    } catch (error) {
-      console.log(error);
-    }
+    } catch (error) {}
   }
 
   return (
-    <AuthContext.Provider value={{ isAuthenticated, signIn, user }}>
+    <AuthContext.Provider
+      value={{ isAuthenticated, signOut, signIn, user, broadcastAuth }}
+    >
       {children}
     </AuthContext.Provider>
   );

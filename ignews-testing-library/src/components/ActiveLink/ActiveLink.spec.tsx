@@ -1,5 +1,4 @@
 import { render } from "@testing-library/react"
-import {jest} from '@jest/globals';
 import { ActiveLink } from "."
 
 // jest.mock('next/router', () => {
@@ -12,15 +11,23 @@ import { ActiveLink } from "."
 //   }
 // })
 
-jest.mock('next/router', () => {
-    return {
-    userRouter() {
-      return {
-        asPath: '/'
-      }
-    }
-  }
-})
+jest.mock('next/router', () => ({
+  useRouter() {
+    return ({
+      route: '/',
+      pathname: '',
+      query: '',
+      asPath: '',
+      push: jest.fn(),
+      events: {
+        on: jest.fn(),
+        off: jest.fn()
+      },
+      beforePopState: jest.fn(() => null),
+      prefetch: jest.fn(() => null)
+    });
+  },
+}));
 
 test('active link renders correctly', () => {
   const { debug } = render(

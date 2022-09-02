@@ -1,5 +1,5 @@
 import { render, screen } from "@testing-library/react"
-import { ActiveLink } from "."
+import { Header } from "."
 
 jest.mock('next/router', () => ({
   useRouter() {
@@ -19,24 +19,23 @@ jest.mock('next/router', () => ({
   },
 }));
 
-describe('ActiveLink component', () => {
+jest.mock('next-auth/react', () => {
+  return {
+    useSession() {
+      return [null, false]
+    }
+  }
+})
+
+describe('Header component', () => {
   it('renders correctly', () => {
     render(
-      <ActiveLink href="/" activeClassName="active">
-        <a>Home</a>
-      </ActiveLink>
+      <Header />
     )
   
     expect(screen.getByText('Home')).toBeInTheDocument();
+    expect(screen.getByText('Posts')).toBeInTheDocument();
   })
-  
-  it('adds active class if the link as currently active', () => {
-    render(
-      <ActiveLink href="/" activeClassName="active">
-        <a>Home</a>
-      </ActiveLink>
-    )
-    expect(screen.getByText('Home')).toHaveClass('active');
-  })
+
 })
 

@@ -13,8 +13,11 @@ export function SubscribeButton() {
       signIn("github");
       return;
     }
+
     if (data.activeSubscription) {
+      console.log("antes do push");
       router.push("/posts");
+      console.log("depois do push");
       return;
     }
 

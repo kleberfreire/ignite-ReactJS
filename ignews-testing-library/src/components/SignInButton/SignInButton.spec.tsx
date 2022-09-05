@@ -25,7 +25,7 @@ describe('SignInButton component', () => {
 
   it('renders correctly when user is authenticated', () => {
 
-    const useSessionMocked = jest.mocked(useSession, true)
+    const useSessionMocked = jest.mocked(useSession)
 
     useSessionMocked.mockReturnValueOnce({
       data: {user: { name: 'Jonh Doe', email: 'jonh.doe@gmail.com', image: '' }, expires: ""},

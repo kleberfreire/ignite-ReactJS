@@ -10,7 +10,7 @@ type Post = {
   slug: string;
   title: string;
   excerpt: string;
-  updatedAT: string;
+  updatedAt: string;
 };
 
 interface IPostsProps {
@@ -32,7 +32,7 @@ export default function Posts({ posts }: IPostsProps) {
           {posts.map((post) => (
             <Link href={`/posts/${post.slug}`} key={post.slug}>
               <a>
-                <time>{post.updatedAT}</time>
+                <time>{post.updatedAt}</time>
                 <strong>{post.title}</strong>
                 <p>{post.excerpt}</p>
               </a>
@@ -60,7 +60,7 @@ export async function getStaticProps({ previewData }) {
           (content: any) =>
             content.type === "paragraph" && content.text.length > 0
         )?.text ?? "",
-      updatedAT: new Date(post.last_publication_date).toLocaleDateString(
+      updatedAt: new Date(post.last_publication_date).toLocaleDateString(
         "pt-BR",
         {
           day: "2-digit",

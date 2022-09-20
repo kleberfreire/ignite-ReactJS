@@ -1,7 +1,7 @@
 import { GetStaticPaths, GetStaticProps } from "next";
 import Head from "next/head";
 
-import { getSession, useSession } from "next-auth/react";
+import { useSession } from "next-auth/react";
 import { RichText } from "prismic-dom";
 
 import styles from "../post.module.scss";
@@ -15,7 +15,7 @@ interface IPost {
     slug: string;
     title: string;
     content: string;
-    updatedAT: string;
+    updatedAt: string;
   };
 }
 
@@ -24,7 +24,6 @@ export default function Post({ post }: IPost) {
   const router = useRouter();
 
   useEffect(() => {
-    console.log(status);
     if (status === "authenticated") {
       router.push(`/posts/${post.slug}`);
     }
@@ -39,7 +38,7 @@ export default function Post({ post }: IPost) {
       <main className={styles.container}>
         <article className={styles.post}>
           <h1>{post.title}</h1>
-          <time>{post.updatedAT}</time>
+          <time>{post.updatedAt}</time>
           <div
             className={`${styles.postContent} ${styles.previewContent}`}
             dangerouslySetInnerHTML={{ __html: post.content }}
@@ -77,7 +76,7 @@ export const getStaticProps: GetStaticProps = async ({
     slug,
     title: RichText.asText(response.data.Title),
     content: RichText.asHtml(response.data.Content.splice(0, 3)),
-    updatedAT: new Date(response.last_publication_date).toLocaleDateString(
+    updatedAt: new Date(response.last_publication_date).toLocaleDateString(
       "pt-BR",
       {
         day: "2-digit",

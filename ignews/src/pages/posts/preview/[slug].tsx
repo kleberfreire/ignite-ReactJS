@@ -69,7 +69,7 @@ export const getStaticProps: GetStaticProps = async ({
 }) => {
   const { slug } = params as any;
 
-  const client = createClient({ previewData });
+  const client = createClient({ previewData } as any);
 
   const response = await client.getByUID("post", String(slug), {});
 

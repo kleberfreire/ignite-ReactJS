@@ -66,7 +66,7 @@ export const getStaticPaths: GetStaticPaths = async () => {
 export const getStaticProps: GetStaticProps = async ({
   params,
   previewData,
-}) => {
+} as any) => {
   const { slug } = params as any;
 
   const client = createClient({ previewData });

@@ -52,7 +52,7 @@ export const getServerSideProps: GetServerSideProps = async ({
     };
   }
 
-  const client = createClient({ previewData });
+  const client = createClient({ previewData } as any);
 
   const response = await client.getByUID("post", String(slug), {});
 

@@ -44,7 +44,11 @@ export default function Posts({ posts }: IPostsProps) {
   );
 }
 
-export async function getStaticProps({ previewData } as any) {
+interface IPreviewData {
+  previewData: any;
+}
+
+export async function getStaticProps({ previewData }: IPreviewData) {
   const client = createClient({ previewData });
 
   const response = await client.getAllByType("post", {

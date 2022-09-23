@@ -44,7 +44,7 @@ export default function Posts({ posts }: IPostsProps) {
   );
 }
 
-export async function getStaticProps({ previewData }) {
+export async function getStaticProps({ previewData } as any) {
   const client = createClient({ previewData });
 
   const response = await client.getAllByType("post", {

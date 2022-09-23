@@ -45,10 +45,10 @@ export default function Posts({ posts }: IPostsProps) {
 }
 
 interface IPreviewData {
-  previewData: any;
+  previewData: IPrismicContext.previewData;
 }
 
-export async function getStaticProps({ previewData }: IPreviewData) {
+export async function getStaticProps({ previewData }) {
   const client = createClient({ previewData });
 
   const response = await client.getAllByType("post", {
